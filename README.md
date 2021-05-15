@@ -15,6 +15,7 @@
   * libwiki::set_filename()
   * libwiki::set_handler()
   * libwiki::do_proc()
+* Then your handler will be called back by each pages. Please do any processes in your handler.
 
 Details in sample1_main.pl
 
