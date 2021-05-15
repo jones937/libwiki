@@ -4,11 +4,11 @@
 
 ## Getting Started
 
-*Include 'libwiki.pl' from your .pl
-*Call 3 functions.
-**libwiki::set_filename()
-**libwiki::set_handler()
-**libwiki::do_proc()
+* Include 'libwiki.pl' from your .pl
+* Call 3 functions.
+** libwiki::set_filename()
+** libwiki::set_handler()
+** libwiki::do_proc()
 
 Details in sample1_main.pl
 
