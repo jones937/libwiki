@@ -67,51 +67,71 @@ sub proc_core {
             return;
         }
     }
-    if ( $_ =~ /^[ ]*<\/page>$/ ) {
-        if ( exists($page{'title'}) ) {
-            $handler->(\%page);
-        }
-        $inpage = 0;
-        $intext = 0;
-        $inrevision = 0;
-        $incontributor = 0;
-        %page        = ();
-        return;
-    }
-    if ( $_ =~ /^[ ]*<ns>(.*)<\/ns>$/ ) {
-        $page{'ns'} = $1;
-    }
-    if ( $_ =~ /^[ ]*<id>(.*)<\/id>$/ ) {
-        if ( $inrevision == 0 ) {
-            $page{'pageid'} = $1;
-        } if ( $incontributor == 1 ) {
-            $page{'contributorid'} = $1;
-        } else {
-            $page{'revisionid'} = $1;
-        }
-    }
-    if ( $_ =~ /^[ ]*<parentid>(.*)<\/parentid>$/ ) {
-        $page{'parentid'} = $1;
-    }
-    if ( $_ =~ /^[ ]*<username>(.*)<\/username>$/ ) {
-        $page{'username'} = $1;
-    }
-    if ( $_ =~ /^[ ]*<ip>(.*)<\/ip>$/ ) {
-        $page{'ip'} = $1;
-    }
-    if ( $_ =~ /^[ ]*<timestamp>(.*)<\/timestamp>$/ ) {
-        $page{'timestamp'} = $1;
-    }
-    if ( $_ =~ /^[ ]*<model>(.*)<\/model>$/ ) {
-        $page{'model'} = $1;
-    }
-    if ( $_ =~ /^[ ]*<format>(.*)<\/format>$/ ) {
-        $page{'format'} = $1;
-    }
-    if ( ! exists($page{'title'}) ) {
-        if ( $_ =~ /^[ ]*<title>(.*)<\/title>$/ ) {
-            $page{'title'} = $1;
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<\/page>$/ ) {
+            if ( exists($page{'title'}) ) {
+                $handler->(\%page);
+            }
+            $inpage = 0;
+            $intext = 0;
+            $inrevision = 0;
+            $incontributor = 0;
+            %page        = ();
             return;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<ns>(.*)<\/ns>$/ ) {
+            $page{'ns'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<id>(.*)<\/id>$/ ) {
+            if ( $inrevision == 0 ) {
+                $page{'pageid'} = $1;
+            } if ( $incontributor == 1 ) {
+                $page{'contributorid'} = $1;
+            } else {
+                $page{'revisionid'} = $1;
+            }
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<parentid>(.*)<\/parentid>$/ ) {
+            $page{'parentid'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<username>(.*)<\/username>$/ ) {
+            $page{'username'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<ip>(.*)<\/ip>$/ ) {
+            $page{'ip'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<timestamp>(.*)<\/timestamp>$/ ) {
+            $page{'timestamp'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<model>(.*)<\/model>$/ ) {
+            $page{'model'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<format>(.*)<\/format>$/ ) {
+            $page{'format'} = $1;
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( ! exists($page{'title'}) ) {
+            if ( $_ =~ /^[ ]*<title>(.*)<\/title>$/ ) {
+                $page{'title'} = $1;
+                return;
+            }
         }
     }
     if ( $intext == 0 ) {
@@ -135,25 +155,33 @@ sub proc_core {
         push( @{$page{'text'}} , $_);
         return;
     }
-    if ( $inrevision == 0 ) {
-        if ( $_ =~ /^[ ]*<revision>$/ ) {
-            $inrevision = 1;
+    if ( $intext == 0 ) {
+        if ( $inrevision == 0 ) {
+            if ( $_ =~ /^[ ]*<revision>$/ ) {
+                $inrevision = 1;
+                return;
+            }
+        }
+    }
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<\/revision>$/ ) {
+            $inrevision = 0;
             return;
         }
     }
-    if ( $_ =~ /^[ ]*<\/revision>$/ ) {
-        $inrevision = 0;
-        return;
-    }
-    if ( $incontributor == 0 ) {
-        if ( $_ =~ /^[ ]*<contributor>$/ ) {
-            $incontributor = 1;
-            return;
+    if ( $intext == 0 ) {
+        if ( $incontributor == 0 ) {
+            if ( $_ =~ /^[ ]*<contributor>$/ ) {
+                $incontributor = 1;
+                return;
+            }
         }
     }
-    if ( $_ =~ /^[ ]*<\/contributor>$/ ) {
-        $incontributor = 0;
-        return;
+    if ( $intext == 0 ) {
+        if ( $_ =~ /^[ ]*<\/contributor>$/ ) {
+            $incontributor = 0;
+            return;
+        }
     }
 }
 sub is_bz2 {
