@@ -7,7 +7,7 @@
 * Download enwiki-20210501-pages-articles.xml.bz2 from https://dumps.wikimedia.your.org/backup-index.html
 * Unbzip2 enwiki-20210501-pages-articles.xml.bz2
 * Run perl
-  * $ perl your.pl enwiki-20210501-pages-articles.xml
+  * $ perl sample1_main.pl enwiki-20210501-pages-articles.xml
 
 ## How to create your own perl program
 * Include 'libwiki.pl' from your .pl
