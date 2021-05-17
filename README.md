@@ -14,8 +14,8 @@
 * Call 3 functions.
   * libwiki::set_filename()
   * libwiki::set_handler()
-  * libwiki::do_proc()
-* Then your handler will be called back by each pages. Please do any processes in your handler.
+  * libwiki::parse()
+* Then your handler will be called back for each pages. Please do any processes in your handler.
 
 Details in sample1_main.pl
 

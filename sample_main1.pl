@@ -23,7 +23,7 @@ sub main {
     print $dumpfile, "\n";
     libwiki::set_filename($dumpfile);
     libwiki::set_handler(\&handler);
-    libwiki::do_proc(); # this will take a time over 30 minutes!
+    libwiki::parse(); # this will take a time over 30 minutes!
 }
 
 # a callback function for each page

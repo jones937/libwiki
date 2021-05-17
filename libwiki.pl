@@ -183,7 +183,7 @@ sub do_loop_xml {
     }
     close DUMP;
 }
-sub do_proc {
+sub parse {
     if ( &is_bz2($dumpfile) ) {
         &do_loop_bz2($dumpfile);
     } else {

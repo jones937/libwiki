@@ -15,7 +15,7 @@ libwiki.plは、Wikipediaのダンプを解析するPerlライブラリです。
 * 下記の関数をコールする
   libwiki::set_filename()
   libwiki::set_handler()
-  libwiki::do_proc()
+  libwiki::parse()
 * 登録したハンドラがページ毎にコールされるので、そこで自分なりの処理を行ってください。
 * 詳細は、sample_main1.plを参照のこと。
 
