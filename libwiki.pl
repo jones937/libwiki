@@ -62,12 +62,12 @@ sub proc_core {
     $_ =~ s/&amp;/&/g;
 
     if ( $inpage == 0 ) {
-        if ( $_ =~ /<page>/ ) {
+        if ( $_ =~ /^[ ]*<page>$/ ) {
             $inpage = 1;
             return;
         }
     }
-    if ( $_ =~ /<\/page>/ ) {
+    if ( $_ =~ /^[ ]*<\/page>$/ ) {
         if ( exists($page{'title'}) ) {
             $handler->(\%page);
         }
@@ -78,10 +78,10 @@ sub proc_core {
         %page        = ();
         return;
     }
-    if ( $_ =~ /<ns>(.*)<\/ns>/ ) {
+    if ( $_ =~ /^[ ]*<ns>(.*)<\/ns>$/ ) {
         $page{'ns'} = $1;
     }
-    if ( $_ =~ /<id>(.*)<\/id>/ ) {
+    if ( $_ =~ /^[ ]*<id>(.*)<\/id>$/ ) {
         if ( $inrevision == 0 ) {
             $page{'pageid'} = $1;
         } if ( $incontributor == 1 ) {
@@ -90,32 +90,32 @@ sub proc_core {
             $page{'revisionid'} = $1;
         }
     }
-    if ( $_ =~ /<parentid>(.*)<\/parentid>/ ) {
+    if ( $_ =~ /^[ ]*<parentid>(.*)<\/parentid>$/ ) {
         $page{'parentid'} = $1;
     }
-    if ( $_ =~ /<username>(.*)<\/username>/ ) {
+    if ( $_ =~ /^[ ]*<username>(.*)<\/username>$/ ) {
         $page{'username'} = $1;
     }
-    if ( $_ =~ /<ip>(.*)<\/ip>/ ) {
+    if ( $_ =~ /^[ ]*<ip>(.*)<\/ip>$/ ) {
         $page{'ip'} = $1;
     }
-    if ( $_ =~ /<timestamp>(.*)<\/timestamp>/ ) {
+    if ( $_ =~ /^[ ]*<timestamp>(.*)<\/timestamp>$/ ) {
         $page{'timestamp'} = $1;
     }
-    if ( $_ =~ /<model>(.*)<\/model>/ ) {
+    if ( $_ =~ /^[ ]*<model>(.*)<\/model>$/ ) {
         $page{'model'} = $1;
     }
-    if ( $_ =~ /<format>(.*)<\/format>/ ) {
+    if ( $_ =~ /^[ ]*<format>(.*)<\/format>$/ ) {
         $page{'format'} = $1;
     }
     if ( ! exists($page{'title'}) ) {
-        if ( $_ =~ /<title>(.*)<\/title>/ ) {
+        if ( $_ =~ /^[ ]*<title>(.*)<\/title>$/ ) {
             $page{'title'} = $1;
             return;
         }
     }
     if ( $intext == 0 ) {
-        if ( $_ =~ /<text/ ) {
+        if ( $_ =~ /^[ ]*<text/ ) {
             $intext = 1;
             $_ =~ s/.*xml:space="preserve">//;
             chomp();
@@ -123,8 +123,8 @@ sub proc_core {
             return;
         }
     }
-    if ( $_ =~ /<\/text>/ ) {
-        $_ =~ s/<\/text>//;
+    if ( $_ =~ /<\/text>$/ ) {
+        $_ =~ s/<\/text>$//;
         chomp();
         push( @{$page{'text'}} , $_);
         $intext = 0;
@@ -136,22 +136,22 @@ sub proc_core {
         return;
     }
     if ( $inrevision == 0 ) {
-        if ( $_ =~ /<revision/ ) {
+        if ( $_ =~ /^[ ]*<revision>$/ ) {
             $inrevision = 1;
             return;
         }
     }
-    if ( $_ =~ /<\/revision>/ ) {
+    if ( $_ =~ /^[ ]*<\/revision>$/ ) {
         $inrevision = 0;
         return;
     }
     if ( $incontributor == 0 ) {
-        if ( $_ =~ /<contributor/ ) {
+        if ( $_ =~ /^[ ]*<contributor>$/ ) {
             $incontributor = 1;
             return;
         }
     }
-    if ( $_ =~ /<\/contributor>/ ) {
+    if ( $_ =~ /^[ ]*<\/contributor>$/ ) {
         $incontributor = 0;
         return;
     }

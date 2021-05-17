@@ -47,10 +47,7 @@ sub handler {
     #---- text ---------------------------
     foreach (@{$$page{'text'}}) {
         my $line = $_;
-        if ( $_ =~ /invalid code/ ) {
-            print "* [[:$title]]\n";
-            print "*: <nowiki>[$_]</nowiki>\n";
-        }
+        print "line=$line\n";
     }
 }
 
