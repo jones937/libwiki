@@ -12,7 +12,7 @@
 #   Call 3 functions.
 #      libwiki::set_filename()
 #      libwiki::set_handler()
-#      libwiki::do_proc()
+#      libwiki::parse()
 #   Details in sample1_main.pl
 #
 # Author:
