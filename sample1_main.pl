@@ -16,7 +16,7 @@ sub main {
     my $dumpfile = "";
 
     if ( @ARGV < 1 ) {
-        print "Usage: main.pl <filename>\n";
+        print "Usage: sample1_main.pl <filename>\n";
         exit 1;
     }
     $dumpfile = $ARGV[0];
