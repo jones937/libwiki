@@ -5,7 +5,7 @@
 ## Getting Started
 
 * Download enwiki-XXXXXXXX-pages-articles.xml.bz2 (or your language version) from https://dumps.wikimedia.your.org/backup-index.html
-* Unbzip2 enwiki-XXXXXXXX-pages-articles.xml.bz2
+* bunzip2 enwiki-XXXXXXXX-pages-articles.xml.bz2
 * Run perl
   * $ perl sample1_main.pl enwiki-XXXXXXXX-pages-articles.xml
 
