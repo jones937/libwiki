@@ -26,3 +26,9 @@ libwiki.plは、Wikipediaのダンプを解析するPerlライブラリです。
 ライセンス
 ==========
 MITライセンス
+
+姉妹作
+==========
+Python version
+https://github.com/jones937/libwikipy
+
