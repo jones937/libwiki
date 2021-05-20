@@ -16,7 +16,7 @@ sub main {
     my $dumpfile = "";
 
     if ( @ARGV < 1 ) {
-        print "Usage: sample1_main.pl <filename>\n";
+        print "Usage: main.pl <filename>\n";
         exit 1;
     }
     $dumpfile = $ARGV[0];
@@ -32,22 +32,19 @@ sub handler {
     my $page = $_[0];
 
     #---- title ---------------------------
-    my $title = $$page{'title'}; # need two '$' signs because 'page' variable is a reference of hash.
-    print "title = $title\n";
-    if ( $title eq "" ) {
+    my $title_er = $$page{'title'}; # need two '$' signs because 'page' variable is a reference of hash.
+    if ( $title_er eq "" ) {
         return;
     }
-    my $ns = $$page{'ns'};
-    print "ns = $ns\n";
-    my $pageid = $$page{'pageid'};
-    print "pageid = $pageid\n";
-    my $revisionid = $$page{'revisionid'};
-    print "revisionid = $revisionid\n";
 
     #---- text ---------------------------
     foreach (@{$$page{'text'}}) {
-        my $line = $_;
-        print "line=$line\n";
+        if ( $_ =~ /Cite web/ ) {
+            my $title = &libwiki::convert_ref2norm($title_er);
+            my $line = &libwiki::convert_ref2norm($_);
+            print "* [[:$title]]\n";
+            print "*: <nowiki>[$line]</nowiki>\n";
+        }
     }
 }
 

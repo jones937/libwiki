@@ -4,8 +4,6 @@
 #   'libwiki.pl' is a library for wikipedia written in Perl.
 #   Analyze 'wikipedia dump xml file' such as
 #   'enwiki-20210501-pages-articles.xml'
-#   or
-#   'enwiki-20210501-pages-articles.xml.bz2'
 #
 # Usage:
 #   Include 'libwiki.pl' from your .pl
@@ -21,8 +19,6 @@
 use strict;
 use warnings;
 use utf8;
-use IO::Uncompress::Bunzip2 qw(bunzip2 $Bunzip2Error) ;
-use Encode 'encode';
 package libwiki;
 
 #-------------------------------------------------------
@@ -51,172 +47,71 @@ sub set_filename {
 sub set_handler {
     $handler = $_[0];
 }
-sub proc_core {
-    $_ = $_[0];
-
+sub convert_ref2norm {
+    my $line = $_[0];
     # convert a HTML character entity reference to a normal character.
-    $_ =~ s/&lt;/</g;
-    $_ =~ s/&gt;/>/g;
-    $_ =~ s/&quot;/"/g;
-    $_ =~ s/&apos;/'/g;
-    $_ =~ s/&amp;/&/g;
-
-    if ( $inpage == 0 ) {
-        if ( $_ =~ /^[ ]*<page>$/ ) {
-            $inpage = 1;
-            return;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<\/page>$/ ) {
-            if ( exists($page{'title'}) ) {
-                $handler->(\%page);
-            }
-            $inpage = 0;
-            $intext = 0;
-            $inrevision = 0;
-            $incontributor = 0;
-            %page        = ();
-            return;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<ns>(.*)<\/ns>$/ ) {
-            $page{'ns'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<id>(.*)<\/id>$/ ) {
-            if ( $inrevision == 0 ) {
-                $page{'pageid'} = $1;
-            } if ( $incontributor == 1 ) {
-                $page{'contributorid'} = $1;
-            } else {
-                $page{'revisionid'} = $1;
-            }
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<parentid>(.*)<\/parentid>$/ ) {
-            $page{'parentid'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<username>(.*)<\/username>$/ ) {
-            $page{'username'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<ip>(.*)<\/ip>$/ ) {
-            $page{'ip'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<timestamp>(.*)<\/timestamp>$/ ) {
-            $page{'timestamp'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<model>(.*)<\/model>$/ ) {
-            $page{'model'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<format>(.*)<\/format>$/ ) {
-            $page{'format'} = $1;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( ! exists($page{'title'}) ) {
-            if ( $_ =~ /^[ ]*<title>(.*)<\/title>$/ ) {
-                $page{'title'} = $1;
-                return;
-            }
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<text/ ) {
-            $intext = 1;
-            $_ =~ s/.*xml:space="preserve">//;
-            chomp();
-            push( @{$page{'text'}} , $_);
-            return;
-        }
-    }
-    if ( $_ =~ /<\/text>$/ ) {
-        $_ =~ s/<\/text>$//;
-        chomp();
-        push( @{$page{'text'}} , $_);
-        $intext = 0;
-        return;
-    }
-    if ( $intext == 1 ) {
-        chomp();
-        push( @{$page{'text'}} , $_);
-        return;
-    }
-    if ( $intext == 0 ) {
-        if ( $inrevision == 0 ) {
-            if ( $_ =~ /^[ ]*<revision>$/ ) {
-                $inrevision = 1;
-                return;
-            }
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<\/revision>$/ ) {
-            $inrevision = 0;
-            return;
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $incontributor == 0 ) {
-            if ( $_ =~ /^[ ]*<contributor>$/ ) {
-                $incontributor = 1;
-                return;
-            }
-        }
-    }
-    if ( $intext == 0 ) {
-        if ( $_ =~ /^[ ]*<\/contributor>$/ ) {
-            $incontributor = 0;
-            return;
-        }
-    }
-}
-sub is_bz2 {
-    my $dumpfile = $_[0];
-    my $pos = index($dumpfile, ".bz2");
-    #print "pos=$pos\n";
-    if ( $pos != -1 ) {
-        return 1;
-    }
-    return 0;
-}
-sub do_loop_bz2 {
-    my $dumpfile = $_[0];
-    my $gz = new IO::Uncompress::Bunzip2 $dumpfile
-        or die "Cannot open $dumpfile: $IO::Uncompress::Bunzip2::Bunzip2Error\n" ;
-    while (<$gz>) {
-        $_ = Encode::decode('UTF-8',$_);
-        &proc_core($_);
-    }
-    $gz->close();
-}
-sub do_loop_xml {
-    my $dumpfile = $_[0];
-    open( DUMP, "<:encoding(UTF-8)", "$dumpfile" );
-    while (<DUMP>) {
-        &proc_core($_);
-    }
-    close DUMP;
+    $line =~ s/&lt;/</g;
+    $line =~ s/&gt;/>/g;
+    $line =~ s/&quot;/"/g;
+    $line =~ s/&apos;/'/g;
+    $line =~ s/&amp;/&/g;
+    return $line;
 }
 sub parse {
-    if ( &is_bz2($dumpfile) ) {
-        &do_loop_bz2($dumpfile);
-    } else {
-        &do_loop_xml($dumpfile);
+    open( DUMP, "<:encoding(UTF-8)", "$dumpfile" );
+    while (<DUMP>) {
+        #$_ = &convert_ref2norm($_);
+
+        if ( $inpage == 0 ) {
+            if ( $_ =~ /^[ ]*<page>$/ ) {
+                $inpage = 1;
+                next;
+            }
+        }
+        if ( $intext == 0 ) {
+            if ( $_ =~ /^[ ]*<\/page>$/ ) {
+                if ( exists($page{'title'}) ) {
+                    $handler->(\%page);
+                }
+                $inpage = 0;
+                $intext = 0;
+                $inrevision = 0;
+                $incontributor = 0;
+                %page        = ();
+                next;
+            }
+        }
+        if ( $intext == 0 ) {
+            if ( ! exists($page{'title'}) ) {
+                if ( $_ =~ /^[ ]*<title>(.*)<\/title>$/ ) {
+                    $page{'title'} = $1;
+                    next;
+                }
+            }
+        }
+        if ( $intext == 0 ) {
+            if ( $_ =~ /^[ ]*<text/ ) {
+                $intext = 1;
+                $_ =~ s/.*xml:space="preserve">//;
+                chomp();
+                push( @{$page{'text'}} , $_);
+                next;
+            }
+        }
+        if ( $_ =~ /<\/text>$/ ) {
+            $_ =~ s/<\/text>$//;
+            chomp();
+            push( @{$page{'text'}} , $_);
+            $intext = 0;
+            next;
+        }
+        if ( $intext == 1 ) {
+            chomp();
+            push( @{$page{'text'}} , $_);
+            next;
+        }
     }
+    close DUMP;
 
 }
 
