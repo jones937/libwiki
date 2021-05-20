@@ -1,6 +1,6 @@
 # libwiki
 
-'libwiki.pl' is a library for wikipedia written in Perl.
+Analyze 'wikipedia dump xml file'.
 
 ## Getting Started
 
