@@ -16,7 +16,7 @@ sub main {
     my $dumpfile = "";
 
     if ( @ARGV < 1 ) {
-        print "Usage: main.pl <filename>\n";
+        print "Usage: sample1_main.pl <filename>\n";
         exit 1;
     }
     $dumpfile = $ARGV[0];
@@ -40,8 +40,6 @@ sub handler {
     #---- text ---------------------------
     foreach (@{$$page{'text'}}) {
         if ( $_ =~ /Cite web/ ) {
-            my $title = &libwiki::convert_ref2norm($title_er);
-            my $line = &libwiki::convert_ref2norm($_);
             print "* [[:$title]]\n";
             print "*: <nowiki>[$line]</nowiki>\n";
         }

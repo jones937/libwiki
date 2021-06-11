@@ -60,7 +60,7 @@ sub convert_ref2norm {
 sub parse {
     open( DUMP, "<:encoding(UTF-8)", "$dumpfile" );
     while (<DUMP>) {
-        #$_ = &convert_ref2norm($_);
+        $_ = &convert_ref2norm($_);
 
         if ( $inpage == 0 ) {
             if ( $_ =~ /^[ ]*<page>$/ ) {
@@ -93,6 +93,12 @@ sub parse {
             if ( $_ =~ /^[ ]*<text/ ) {
                 $intext = 1;
                 $_ =~ s/.*xml:space="preserve">//;
+
+                # 一行の場合がある 2021.6.11
+                if ( $_ =~ /<\/text>$/ ) {
+                    $_ =~ s/<\/text>$//;
+                    $intext = 0;
+                }
                 chomp();
                 push( @{$page{'text'}} , $_);
                 next;
