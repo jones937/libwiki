@@ -34,6 +34,7 @@ package libwiki;
 #-------------------------------------------------------
 my $dumpfile = "";
 my $handler = "";
+my $lasthandler = "";
 my $inpage = 0;
 my $intext = 0;
 my $inrevision = 0;
@@ -46,6 +47,9 @@ sub set_filename {
 }
 sub set_handler {
     $handler = $_[0];
+}
+sub set_lasthandler {
+    $lasthandler = $_[0];
 }
 sub convert_ref2norm {
     my $line = $_[0];
@@ -90,6 +94,12 @@ sub parse {
             }
         }
         if ( $intext == 0 ) {
+            # ページ内容が0byteの空白の場合がある 2022.6.2
+            if ( $_ =~ /^[ ]*<text.*\/>/ ) {
+                push( @{$page{'text'}} , "");
+                $intext = 0;
+                next;
+            }
             if ( $_ =~ /^[ ]*<text/ ) {
                 $intext = 1;
                 $_ =~ s/.*xml:space="preserve">//;
@@ -116,6 +126,9 @@ sub parse {
             push( @{$page{'text'}} , $_);
             next;
         }
+    }
+    if ( $lasthandler ne "" ) {
+        $lasthandler->();
     }
     close DUMP;
 
